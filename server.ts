@@ -1411,15 +1411,6 @@ Respond ONLY with a valid, clean JSON object matching this exact schema (no mark
   app.get('/api/download-project', (req, res) => {
     const zipPath = path.join(process.cwd(), 'public', 'reelcast-studio-export.zip');
 
-    try {
-      // Re-bundle to ensure latest files are included
-      execSync('zip -r public/reelcast-studio-export.zip . -x "node_modules/*" "dist/*" ".git/*" ".cache/*" ".npm/*" "tmp/*" "*.log" "*.zip"', {
-        cwd: process.cwd()
-      });
-    } catch (e) {
-      console.warn('Zip regeneration note:', e);
-    }
-
     if (fs.existsSync(zipPath)) {
       res.setHeader('Content-Type', 'application/zip');
       res.download(zipPath, 'reelcast-studio-export.zip', (err) => {

@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-ink: #14181f;
+  --color-paper: #f7f6f3;
+  --color-line: #e4e1da;
+  --color-accent: #2f6f4f;
+  --color-accent-hover: #265b41;
+  --color-accent2: #c4622d;
+  --color-surface: #ffffff;
+  --color-muted: #6b6f76;
+  --color-danger: #b3432b;
+  --color-warn: #b98221;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+.dark {
+  --color-ink: #f1f3f7;
+  --color-paper: #0e1117;
+  --color-line: #222834;
+  --color-surface: #161b24;
+  --color-muted: #9aa1b0;
+}
+
+body {
+  background-color: var(--color-paper, #f7f6f3);
+  color: var(--color-ink, #14181f);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars for clean studio feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d0c7;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b5b0a4;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #2b3240;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #394254;
+}
+
+/* Custom dual trimmer range styling */
+input[type=range].trimmer-slider {
+  pointer-events: none;
+}
+input[type=range].trimmer-slider::-webkit-slider-thumb {
+  pointer-events: auto;
+  cursor: ew-resize;
+}
+input[type=range].trimmer-slider::-moz-range-thumb {
+  pointer-events: auto;
+  cursor: ew-resize;
+}
