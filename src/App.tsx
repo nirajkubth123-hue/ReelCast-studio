@@ -40,8 +40,27 @@ export default function App() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Accounts State
-  const [accounts, setAccounts] = useState<SocialAccount[]>(INITIAL_ACCOUNTS);
+  // Accounts State with localStorage persistence
+  const [accounts, setAccounts] = useState<SocialAccount[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('reelcast_connected_accounts');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to load accounts from localStorage', e);
+      }
+    }
+    return INITIAL_ACCOUNTS;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('reelcast_connected_accounts', JSON.stringify(accounts));
+    } catch (e) {
+      console.error('Failed to save accounts to localStorage', e);
+    }
+  }, [accounts]);
 
   // Selected Target Platforms
   const [selectedPlatforms, setSelectedPlatforms] = useState<PlatformId[]>([
@@ -502,6 +521,34 @@ export default function App() {
     }));
   };
 
+  const handleAddCustomAccount = (newAcc: Omit<SocialAccount, 'id'>) => {
+    const createdAccount: SocialAccount = {
+      ...newAcc,
+      id: `acc-${newAcc.platform}-${Date.now()}`
+    };
+    setAccounts(prev => [createdAccount, ...prev]);
+
+    addNotification({
+      type: 'success',
+      title: 'New Account Added',
+      message: `${createdAccount.accountName} (${createdAccount.handle}) was successfully added and connected for publishing!`,
+      platforms: [createdAccount.platform]
+    });
+  };
+
+  const handleDeleteAccount = (accId: string) => {
+    const target = accounts.find(a => a.id === accId);
+    setAccounts(prev => prev.filter(a => a.id !== accId));
+    if (target) {
+      addNotification({
+        type: 'info',
+        title: 'Account Removed',
+        message: `${target.accountName} (${target.handle}) has been disconnected and removed.`,
+        platforms: [target.platform]
+      });
+    }
+  };
+
   const handleBulkUpdateScheduledTime = (postIds: string[], newScheduledTime: string) => {
     setPosts(prevPosts =>
       prevPosts.map(post => {
@@ -790,6 +837,8 @@ export default function App() {
         accounts={accounts}
         onToggleConnection={handleToggleAccountConnection}
         onUpdateAccount={handleUpdateAccount}
+        onAddAccount={handleAddCustomAccount}
+        onDeleteAccount={handleDeleteAccount}
       />
 
       <PublishAppModal
