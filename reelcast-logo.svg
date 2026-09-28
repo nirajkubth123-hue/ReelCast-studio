@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" fill="none">
+  <defs>
+    <!-- Background subtle dark pill glow -->
+    <radialGradient id="smokeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1e2330" stop-opacity="0.95"/>
+      <stop offset="70%" stop-color="#141824" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#0f121a" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Vibrant R Logo Main Gradient: purple/magenta to electric blue to warm orange -->
+    <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA" />
+      <stop offset="25%" stop-color="#D946EF" />
+      <stop offset="55%" stop-color="#3B82F6" />
+      <stop offset="85%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#F97316" />
+    </linearGradient>
+
+    <!-- Speed bars gradient -->
+    <linearGradient id="bar1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EC4899" />
+      <stop offset="100%" stop-color="#F43F5E" />
+    </linearGradient>
+    <linearGradient id="bar2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="bar3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#F97316" />
+    </linearGradient>
+
+    <!-- Cast Radio Waves gradient -->
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="50%" stop-color="#8B5CF6" />
+      <stop offset="100%" stop-color="#D946EF" />
+    </linearGradient>
+
+    <!-- Reelcast text warm gradient -->
+    <linearGradient id="castTextGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="50%" stop-color="#EC4899" />
+      <stop offset="100%" stop-color="#F97316" />
+    </linearGradient>
+
+    <filter id="logoShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Left Speed Motion Lines -->
+  <g filter="url(#logoShadow)">
+    <rect x="90" y="112" width="46" height="15" rx="7.5" fill="url(#bar1)" />
+    <rect x="80" y="137" width="56" height="15" rx="7.5" fill="url(#bar2)" />
+    <rect x="92" y="162" width="44" height="15" rx="7.5" fill="url(#bar3)" />
+  </g>
+
+  <!-- Right Broadcast Waves -->
+  <g filter="url(#logoShadow)" stroke="url(#waveGrad)" stroke-linecap="round" fill="none">
+    <!-- Inner wave -->
+    <path d="M 330 115 A 65 65 0 0 1 330 180" stroke-width="15" />
+    <!-- Outer wave -->
+    <path d="M 352 95 A 95 95 0 0 1 352 198" stroke-width="15" />
+  </g>
+
+  <!-- Big Stylized 'R' Emblem with Play Icon Notch -->
+  <g filter="url(#logoShadow)">
+    <!-- Main Outer R Silhouette -->
+    <path d="
+      M 148 75
+      C 148 64, 157 55, 168 55
+      L 270 55
+      C 318 55, 348 85, 348 135
+      C 348 175, 322 202, 280 212
+      L 332 288
+      C 336 294, 331 302, 323 302
+      L 268 302
+      C 261 302, 255 298, 251 292
+      L 210 225
+      L 194 225
+      L 194 294
+      C 194 301, 188 307, 181 307
+      L 161 307
+      C 154 307, 148 301, 148 294
+      Z
+    " fill="url(#rGrad)" />
+
+    <!-- Play Button Triangle inside upper counter -->
+    <polygon points="208,90 286,135 208,180" fill="#FFFFFF" rx="8" />
+  </g>
+
+  <!-- Brand Typography -->
+  <!-- "Reel" in bold white/clean font, "cast" in vibrant gradient -->
+  <g filter="url(#logoShadow)" font-family="Plus Jakarta Sans, system-ui, -apple-system, sans-serif">
+    <text x="250" y="380" text-anchor="middle" font-size="58" font-weight="900" letter-spacing="-1.5">
+      <tspan fill="#FFFFFF">Reel</tspan><tspan fill="url(#castTextGrad)">cast</tspan>
+    </text>
+    
+    <text x="250" y="420" text-anchor="middle" font-size="22" font-weight="700" fill="#F3F4F6" letter-spacing="5">
+      SOCIAL STUDIO
+    </text>
+    
+    <text x="250" y="455" text-anchor="middle" font-size="16" font-weight="500" fill="#9CA3AF" letter-spacing="1">
+      One upload. Every feed.
+    </text>
+  </g>
+</svg>

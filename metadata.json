@@ -1,0 +1,6 @@
+{
+  "name": "Reelcast Studio",
+  "description": "Upload vertical videos, write and adapt captions, and publish or schedule simultaneously to Instagram Reels, Facebook Reels, and YouTube Shorts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
