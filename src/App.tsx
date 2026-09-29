@@ -13,6 +13,7 @@ import { ShareAppModal } from './components/ShareAppModal';
 import { FeedbackModal } from './components/FeedbackModal';
 import { DailySocialTip } from './components/DailySocialTip';
 import { LegalModal } from './components/LegalModal';
+import { SettingsModal, DEFAULT_APP_SETTINGS, AppSettingsState } from './components/SettingsModal';
 import { CaptionSettings, PlatformId, PublishMode, ScheduledPost, SocialAccount, VideoMetadata, AppNotification } from './types';
 import { INITIAL_ACCOUNTS, INITIAL_POST_HISTORY, SAMPLE_VIDEOS, MOCK_NOTIFICATIONS } from './data/mockData';
 import { useI18n } from './i18n/I18nContext';
@@ -146,6 +147,7 @@ export default function App() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [showAccountsModal, setShowAccountsModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showHistoryDrawer, setShowHistoryDrawer] = useState(false);
   const [showPublishAppModal, setShowPublishAppModal] = useState(false);
   const [showShareAppModal, setShowShareAppModal] = useState(false);
@@ -154,6 +156,31 @@ export default function App() {
   const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms' | 'deletion'>('privacy');
   const [lastPublishMode, setLastPublishMode] = useState<PublishMode>('now');
   const [lastScheduledTime, setLastScheduledTime] = useState<string | undefined>();
+
+  // Application Settings State with persistence
+  const [appSettings, setAppSettings] = useState<AppSettingsState>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('reelcast_app_settings');
+        if (saved) return { ...DEFAULT_APP_SETTINGS, ...JSON.parse(saved) };
+      } catch (e) {
+        console.error('Failed to load settings', e);
+      }
+    }
+    return DEFAULT_APP_SETTINGS;
+  });
+
+  const handleUpdateSettings = (updated: Partial<AppSettingsState>) => {
+    setAppSettings(prev => {
+      const next = { ...prev, ...updated };
+      try {
+        localStorage.setItem('reelcast_app_settings', JSON.stringify(next));
+      } catch (e) {
+        console.error('Failed to save settings', e);
+      }
+      return next;
+    });
+  };
 
   const handleOpenLegal = (tab: 'privacy' | 'terms' | 'deletion') => {
     setLegalModalTab(tab);
@@ -655,6 +682,7 @@ export default function App() {
       <Header
         accounts={accounts}
         onOpenAccounts={() => setShowAccountsModal(true)}
+        onOpenSettings={() => setShowSettingsModal(true)}
         onOpenHistory={() => setShowHistoryDrawer(true)}
         onOpenPublishApp={() => setShowPublishAppModal(true)}
         onOpenShareApp={() => setShowShareAppModal(true)}
@@ -770,8 +798,8 @@ export default function App() {
         </div>
       </main>
 
-      {/* Studio Footer */}
-      <footer className="border-t border-[#e4e1da] dark:border-[#222834] bg-white dark:bg-[#131720] py-6 transition-colors duration-200">
+      {/* Clean Studio Bottom Panel (Privacy Policy, Terms & Conditions, User Declaration) */}
+      <footer className="border-t border-[#e4e1da] dark:border-[#222834] bg-white dark:bg-[#131720] py-5 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#6b6f76] dark:text-[#9aa1b0]">
           <div className="flex items-center gap-2.5">
             <img src="/reelcast-logo.svg" alt="Reelcast" className="w-5 h-5 object-contain" />
@@ -783,54 +811,44 @@ export default function App() {
             </span>
           </div>
 
-          <div className="flex items-center flex-wrap justify-center gap-4">
+          <div className="flex items-center flex-wrap justify-center gap-4 sm:gap-6 text-xs font-medium">
             <button
-              onClick={() => setShowFeedbackModal(true)}
-              className="text-amber-600 dark:text-amber-400 hover:underline font-semibold flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full border border-amber-200/60 dark:border-amber-800/40"
-              title="Community Reviews & Feedback"
-            >
-              <span>⭐ Reviews & Feedback</span>
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => setShowShareAppModal(true)}
-              className="text-purple-600 dark:text-purple-400 hover:underline font-semibold flex items-center gap-1"
-            >
-              <span>🔗 Share App</span>
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => setShowPublishAppModal(true)}
-              className="text-[#2f6f4f] dark:text-[#52b788] hover:underline font-semibold flex items-center gap-1"
-            >
-              <span>🚀 Publish & Go Live Guide</span>
-            </button>
-            <span>•</span>
-            <button
+              id="btn-footer-privacy"
               onClick={() => handleOpenLegal('privacy')}
-              className="hover:text-[#14181f] dark:hover:text-[#f1f3f7] hover:underline"
+              className="text-[#6b6f76] dark:text-[#9aa1b0] hover:text-[#14181f] dark:hover:text-[#f1f3f7] hover:underline transition-colors cursor-pointer"
             >
               Privacy Policy
             </button>
             <span>•</span>
             <button
+              id="btn-footer-terms"
               onClick={() => handleOpenLegal('terms')}
-              className="hover:text-[#14181f] dark:hover:text-[#f1f3f7] hover:underline"
+              className="text-[#6b6f76] dark:text-[#9aa1b0] hover:text-[#14181f] dark:hover:text-[#f1f3f7] hover:underline transition-colors cursor-pointer"
             >
-              Terms of Service
+              Terms &amp; Conditions
             </button>
             <span>•</span>
             <button
+              id="btn-footer-declaration"
               onClick={() => handleOpenLegal('deletion')}
-              className="hover:text-[#14181f] dark:hover:text-[#f1f3f7] hover:underline"
+              className="text-[#6b6f76] dark:text-[#9aa1b0] hover:text-[#14181f] dark:hover:text-[#f1f3f7] hover:underline transition-colors cursor-pointer"
             >
-              User Data Deletion
+              User Declaration
             </button>
           </div>
         </div>
       </footer>
 
       {/* Modals & Slide-overs */}
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        currentTheme={theme}
+        onSetTheme={setTheme}
+        settings={appSettings}
+        onUpdateSettings={handleUpdateSettings}
+      />
+
       <AccountsModal
         isOpen={showAccountsModal}
         onClose={() => setShowAccountsModal(false)}

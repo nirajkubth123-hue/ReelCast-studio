@@ -1,5 +1,5 @@
 import React from 'react';
-import { Share2, UserCheck, Clock, Settings2, Sun, Moon, Rocket } from 'lucide-react';
+import { Share2, UserCheck, Clock, Settings, Settings2, Sun, Moon, Rocket, Menu } from 'lucide-react';
 import { SocialAccount, AppNotification } from '../types';
 import { NotificationBell } from './NotificationBell';
 import { LanguageSelector } from './LanguageSelector';
@@ -8,6 +8,7 @@ import { useI18n } from '../i18n/I18nContext';
 interface HeaderProps {
   accounts: SocialAccount[];
   onOpenAccounts: () => void;
+  onOpenSettings: () => void;
   onOpenHistory: () => void;
   onOpenPublishApp: () => void;
   onOpenShareApp?: () => void;
@@ -26,6 +27,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   accounts,
   onOpenAccounts,
+  onOpenSettings,
   onOpenHistory,
   onOpenPublishApp,
   onOpenShareApp,
@@ -46,13 +48,37 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="border-b border-[#e4e1da] dark:border-[#222834] bg-white dark:bg-[#161b24] sticky top-0 z-30 shadow-xs transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand Logo & Tagline */}
-        <div className="flex items-center gap-3">
+        {/* Brand Logo, Tagline & 3-Slash Bar for Account Section */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* 3 Slash Bar (Menu) Button for Account Section */}
+          <button
+            id="btn-top-left-accounts-menu"
+            type="button"
+            onClick={onOpenAccounts}
+            className="group relative p-2.5 rounded-xl text-[#14181f] dark:text-[#f1f3f7] bg-[#f7f6f3] dark:bg-[#1c222d] hover:bg-[#ece8df] dark:hover:bg-[#252c3a] border border-[#e4e1da] dark:border-[#262c38] transition-all hover:scale-105 active:scale-95 shadow-2xs flex items-center justify-center cursor-pointer"
+            title="Open Accounts Section (3 Slash Bar)"
+            aria-label="Open Accounts Menu (3 Slash Bar)"
+          >
+            {/* 3 Slash / Bar Icon */}
+            <div className="w-5 h-5 flex flex-col justify-center items-center gap-1">
+              <span className="w-4 h-0.5 bg-[#2f6f4f] dark:bg-[#52b788] rounded-full transition-transform group-hover:-rotate-6" />
+              <span className="w-4 h-0.5 bg-[#2f6f4f] dark:bg-[#52b788] rounded-full transition-transform" />
+              <span className="w-4 h-0.5 bg-[#2f6f4f] dark:bg-[#52b788] rounded-full transition-transform group-hover:rotate-6" />
+            </div>
+            
+            {/* Connected Accounts indicator dot */}
+            {connectedCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 text-[9px] font-bold text-white rounded-full flex items-center justify-center shadow-xs border-2 border-white dark:border-[#161b24]">
+                {connectedCount}
+              </span>
+            )}
+          </button>
+
           <div className="relative group flex items-center justify-center">
             <img 
               src="/reelcast-logo.svg" 
               alt="Reelcast Social Studio" 
-              className="w-11 h-11 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-105"
+              className="w-10 h-10 sm:w-11 sm:h-11 object-contain drop-shadow-md transition-transform duration-200 group-hover:scale-105"
             />
           </div>
           <div>
@@ -122,6 +148,19 @@ export const Header: React.FC<HeaderProps> = ({
             onSimulateSuccess={onSimulateSuccess}
             onSimulateError={onSimulateError}
           />
+
+          {/* Settings Button */}
+          <button
+            id="btn-open-settings"
+            type="button"
+            onClick={onOpenSettings}
+            title="Settings (Appearance, Dark/Light Mode, Studio Preferences)"
+            aria-label="Open Settings"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14181f] dark:text-[#f1f3f7] bg-white dark:bg-[#1c222d] hover:bg-[#f7f6f3] dark:hover:bg-[#252c3a] border border-[#e4e1da] dark:border-[#262c38] rounded-md transition-colors"
+          >
+            <Settings className="w-3.5 h-3.5 text-[#6b6f76] dark:text-[#9aa1b0]" />
+            <span className="hidden sm:inline">Settings</span>
+          </button>
 
           {/* History Button */}
           <button

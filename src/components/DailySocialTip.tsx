@@ -115,9 +115,13 @@ export const DailySocialTip: React.FC<DailySocialTipProps> = ({
               <h2 className="text-sm font-bold text-[#14181f] dark:text-[#f1f3f7] flex items-center gap-1.5">
                 Daily Social Tip & Creative Hook
               </h2>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 flex items-center gap-1 border border-purple-200 dark:border-purple-800/40">
+              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 border ${
+                provider.includes('gemini') || provider.includes('cached-ai')
+                  ? 'bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/40'
+                  : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/40'
+              }`}>
                 <Zap className="w-2.5 h-2.5" />
-                Gemini 3.8 Flash
+                {provider.includes('gemini') || provider.includes('cached-ai') ? 'Gemini 3.8 Flash' : 'Pro Strategy'}
               </span>
             </div>
             <p className="text-[11px] text-[#6b6f76] dark:text-[#9aa1b0]">

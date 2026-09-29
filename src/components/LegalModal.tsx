@@ -124,7 +124,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
             }`}
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Data Deletion Instructions</span>
+            <span>User Declaration &amp; Data Deletion</span>
           </button>
         </div>
 
@@ -194,13 +194,26 @@ export const LegalModal: React.FC<LegalModalProps> = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-[#e4e1da] dark:border-[#262e3d] pb-2">
                 <span className="font-semibold text-[#14181f] dark:text-[#f1f3f7]">
-                  User Data Deletion Instructions (Meta Compliance)
+                  User Declaration &amp; Data Deletion Policy
                 </span>
-                <span className="text-[11px] text-[#6b6f76]">Official Callback Policy</span>
+                <span className="text-[11px] text-[#6b6f76]">Meta &amp; Google Platform Compliance</span>
               </div>
-              <p>
-                Reelcast Studio provides users with instant, complete control over their authenticated account data.
-              </p>
+
+              <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-500/10 space-y-2">
+                <div className="font-bold text-xs text-[#2f6f4f] dark:text-[#52b788] uppercase tracking-wider">
+                  Official User Declaration
+                </div>
+                <p className="text-xs text-[#14181f] dark:text-[#f1f3f7] leading-relaxed">
+                  As a creator using Reelcast Social Studio, you declare and certify that:
+                </p>
+                <ul className="list-disc pl-5 space-y-1.5 text-xs text-[#4b5563] dark:text-[#9aa1b0]">
+                  <li>You hold lawful ownership, broadcast rights, and intellectual property licenses for all audio, video, images, and captions uploaded.</li>
+                  <li>Your content complies with Meta Platform Terms, YouTube Terms of Service, and all applicable community safety rules.</li>
+                  <li>You authorize Reelcast Studio solely to transmit and schedule your selected media directly to your authorized channels.</li>
+                  <li>Your credentials are encrypted and under your complete control, revocable at any time.</li>
+                </ul>
+              </div>
+
               <div className="bg-[#f7f6f3] dark:bg-[#1a202c] p-4 rounded-xl border border-[#e4e1da] dark:border-[#262e3d] space-y-2">
                 <div className="font-semibold text-[#14181f] dark:text-[#f1f3f7]">
                   Three Ways to Delete Your Data:

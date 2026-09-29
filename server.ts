@@ -711,10 +711,27 @@ ${text}`;
     }
   });
 
+  // In-memory cache & rate-limit backoff tracker for AI Daily Tip to avoid 429 quota exhaustion
+  const dailyTipCache: Record<string, { data: any; timestamp: number }> = {};
+  let geminiRateLimitUntil = 0;
+
   // API: AI-Powered Daily Social Tip & Content Idea Generator
   app.post('/api/ai/daily-tip', async (req, res) => {
     try {
       const { niche = 'travel', tone = 'viral', videoTitle = '', videoDuration = 15 } = req.body;
+      const normalizedNiche = (niche || 'travel').toLowerCase();
+      const cacheKey = `${normalizedNiche}_${tone}`;
+
+      // Check server cache (valid for 10 minutes)
+      const cached = dailyTipCache[cacheKey];
+      if (cached && Date.now() - cached.timestamp < 10 * 60 * 1000) {
+        return res.json({
+          success: true,
+          data: cached.data,
+          niche: normalizedNiche,
+          provider: 'cached-ai'
+        });
+      }
 
       // Curated expert fallback bank in case Gemini API key is unset or network latency occurs
       const fallbackTips: Record<string, Array<{
@@ -787,10 +804,12 @@ ${text}`;
         ]
       };
 
-      const selectedNicheList = fallbackTips[niche.toLowerCase()] || fallbackTips['travel'];
+      const selectedNicheList = fallbackTips[normalizedNiche] || fallbackTips['travel'];
       const defaultFallback = selectedNicheList[Math.floor(Math.random() * selectedNicheList.length)];
 
-      if (process.env.GEMINI_API_KEY) {
+      const isRateLimited = Date.now() < geminiRateLimitUntil;
+
+      if (process.env.GEMINI_API_KEY && !isRateLimited) {
         try {
           const { GoogleGenAI } = await import('@google/genai');
           const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -823,33 +842,53 @@ Respond ONLY with a valid, clean JSON object matching this exact schema (no mark
           const rawText = response.text ? response.text.trim() : '';
           if (rawText) {
             const parsed = JSON.parse(rawText);
+            const compiledData = {
+              tip: parsed.tip || defaultFallback.tip,
+              hookIdea: parsed.hookIdea || defaultFallback.hookIdea,
+              actionableCallToAction: parsed.actionableCallToAction || defaultFallback.actionableCallToAction,
+              recommendedHashtags: parsed.recommendedHashtags || defaultFallback.recommendedHashtags,
+              bestTimeToPost: parsed.bestTimeToPost || defaultFallback.bestTimeToPost,
+              algorithmInsight: parsed.algorithmInsight || "Instagram Reels and YouTube Shorts measure average percentage watched in the first 3 seconds to trigger the explore feed."
+            };
+
+            // Cache successful result
+            dailyTipCache[cacheKey] = {
+              data: compiledData,
+              timestamp: Date.now()
+            };
+
             return res.json({
               success: true,
-              data: {
-                tip: parsed.tip || defaultFallback.tip,
-                hookIdea: parsed.hookIdea || defaultFallback.hookIdea,
-                actionableCallToAction: parsed.actionableCallToAction || defaultFallback.actionableCallToAction,
-                recommendedHashtags: parsed.recommendedHashtags || defaultFallback.recommendedHashtags,
-                bestTimeToPost: parsed.bestTimeToPost || defaultFallback.bestTimeToPost,
-                algorithmInsight: parsed.algorithmInsight || "Instagram Reels and YouTube Shorts measure average percentage watched in the first 3 seconds to trigger the explore feed."
-              },
-              niche,
+              data: compiledData,
+              niche: normalizedNiche,
               provider: 'gemini-3.8-flash'
             });
           }
         } catch (aiErr: any) {
-          console.warn('Gemini daily tip generation error, using curated fallback:', aiErr.message);
+          // If quota exceeded (429 RESOURCE_EXHAUSTED), back off for 60 seconds
+          if (aiErr?.status === 429 || aiErr?.message?.includes('429') || aiErr?.message?.includes('RESOURCE_EXHAUSTED')) {
+            geminiRateLimitUntil = Date.now() + 60 * 1000;
+          }
+          // Do not log noisy console warnings for expected free-tier quota limits
         }
       }
+
+      // Cache fallback result for 5 minutes so subsequent clicks don't hit rate limits
+      const fallbackResult = {
+        ...defaultFallback,
+        algorithmInsight: "Platforms reward seamless loops and comments answered within the first 60 minutes after posting."
+      };
+
+      dailyTipCache[cacheKey] = {
+        data: fallbackResult,
+        timestamp: Date.now()
+      };
 
       // Return curated fallback
       return res.json({
         success: true,
-        data: {
-          ...defaultFallback,
-          algorithmInsight: "Platforms reward seamless loops and comments answered within the first 60 minutes after posting."
-        },
-        niche,
+        data: fallbackResult,
+        niche: normalizedNiche,
         provider: 'curated-fallback'
       });
     } catch (err: any) {
