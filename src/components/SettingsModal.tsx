@@ -66,6 +66,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const { t, language, setLanguage } = useI18n();
   const [activeTab, setActiveTab] = useState<'appearance' | 'studio' | 'notifications' | 'storage'>('appearance');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [cacheCleared, setCacheCleared] = useState(false);
 
   if (!isOpen) return null;
 
@@ -439,22 +440,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     Reset all cached caption drafts, trimmed timestamps, and local studio form state.
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (confirm('Are you sure you want to clear cached studio form drafts?')) {
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
                       localStorage.removeItem('reelcast_draft_caption');
                       localStorage.removeItem('reelcast_draft_title');
                       localStorage.removeItem('reelcast_draft_video_meta');
                       triggerSaveNotification();
-                      alert('Draft cache cleared.');
-                    }
-                  }}
-                  className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-[#151a24] border border-red-200 dark:border-red-800 hover:bg-red-100/50 transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Clear Draft Cache</span>
-                </button>
+                      setCacheCleared(true);
+                      setTimeout(() => setCacheCleared(false), 3000);
+                    }}
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-red-600 dark:text-red-400 bg-white dark:bg-[#151a24] border border-red-200 dark:border-red-800 hover:bg-red-100/50 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Clear Draft Cache</span>
+                  </button>
+                  {cacheCleared && (
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 animate-in fade-in">
+                      <Check className="w-3.5 h-3.5" /> Draft cache cleared successfully!
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           )}

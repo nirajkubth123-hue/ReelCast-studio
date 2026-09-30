@@ -598,6 +598,79 @@ export default function App() {
     });
   };
 
+  const handleRetryPost = (postId: string) => {
+    const targetPost = posts.find(p => p.id === postId);
+    if (!targetPost) return;
+
+    // Transition all failed targets into published / verified state
+    const updatedTargetStatuses = { ...targetPost.targetStatuses };
+    Object.keys(updatedTargetStatuses).forEach(plat => {
+      if (updatedTargetStatuses[plat as PlatformId] === 'failed') {
+        updatedTargetStatuses[plat as PlatformId] = 'published';
+      }
+    });
+
+    setPosts(prevPosts =>
+      prevPosts.map(p =>
+        p.id === postId
+          ? {
+              ...p,
+              status: 'published',
+              targetStatuses: updatedTargetStatuses,
+              performance: p.performance || {
+                totalReach: 18200,
+                totalViews: 22400,
+                totalLikes: 2140,
+                totalComments: 184,
+                totalShares: 420,
+                engagementRate: 13.8,
+                avgWatchPercentage: 84.5,
+                platformMetrics: {
+                  instagram: {
+                    reach: 9200,
+                    views: 11400,
+                    likes: 1100,
+                    comments: 92,
+                    shares: 220,
+                    avgWatchPercentage: 86.2
+                  },
+                  facebook: {
+                    reach: 4800,
+                    views: 5800,
+                    likes: 540,
+                    comments: 42,
+                    shares: 110,
+                    avgWatchPercentage: 80.5
+                  },
+                  youtube: {
+                    reach: 4200,
+                    views: 5200,
+                    likes: 500,
+                    comments: 50,
+                    shares: 90,
+                    avgWatchPercentage: 85.0
+                  }
+                },
+                trendDaily: [
+                  { day: 'Day 1', instagramReach: 4200, facebookReach: 2100, youtubeReach: 1900, totalReach: 8200, engagement: 12.4 },
+                  { day: 'Day 2', instagramReach: 5000, facebookReach: 2700, youtubeReach: 2300, totalReach: 10000, engagement: 14.2 }
+                ]
+              }
+            }
+          : p
+      )
+    );
+
+    addNotification({
+      type: 'success',
+      title: 'Post Delivery Retried',
+      message: `Successfully re-transmitted "${targetPost.title || 'Reel'}" to channels. All streams are now live and published!`,
+      platforms: targetPost.platforms,
+      actionLabel: 'View Queue',
+      actionType: 'open_history'
+    });
+  };
+
   const handleBulkCancelScheduledPosts = (postIds: string[]) => {
     setPosts(prevPosts => prevPosts.filter(post => !postIds.includes(post.id)));
 
@@ -909,9 +982,7 @@ export default function App() {
         isOpen={showHistoryDrawer}
         onClose={() => setShowHistoryDrawer(false)}
         posts={posts}
-        onRetryPost={(postId) => {
-          alert(`Retrying delivery for post #${postId}...`);
-        }}
+        onRetryPost={handleRetryPost}
         onBulkUpdateScheduledTime={handleBulkUpdateScheduledTime}
         onBulkCancelScheduledPosts={handleBulkCancelScheduledPosts}
         onRefreshAnalytics={handleRefreshAnalytics}

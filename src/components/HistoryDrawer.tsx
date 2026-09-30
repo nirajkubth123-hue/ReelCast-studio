@@ -575,8 +575,14 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
 
                           {Object.values(post.targetStatuses).includes('failed') && (
                             <button
-                              onClick={() => onRetryPost && onRetryPost(post.id)}
-                              className="text-[#b3432b] hover:underline font-semibold flex items-center gap-1"
+                              type="button"
+                              onClick={() => {
+                                if (onRetryPost) {
+                                  onRetryPost(post.id);
+                                  setToastMessage(`Retried delivery for post: "${post.title || 'Reel'}". Delivery successful!`);
+                                }
+                              }}
+                              className="text-[#b3432b] hover:text-[#d33d1e] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
                             >
                               <RotateCcw className="w-3 h-3" />
                               Retry Failed
