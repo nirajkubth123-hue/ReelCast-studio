@@ -99,23 +99,32 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Right Nav & Badges */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Connected Accounts Pills */}
-          <div className="hidden lg:flex items-center gap-1.5 bg-[#f7f6f3] dark:bg-[#1c222d] border border-[#e4e1da] dark:border-[#262c38] rounded-full px-3 py-1 text-xs">
+          <button
+            type="button"
+            onClick={onOpenAccounts}
+            className="hidden lg:flex items-center gap-1.5 bg-[#f7f6f3] dark:bg-[#1c222d] hover:bg-[#ece8df] dark:hover:bg-[#252c3a] border border-[#e4e1da] dark:border-[#262c38] rounded-full px-3 py-1 text-xs transition-colors cursor-pointer"
+            title="Manage Connected Channels"
+          >
             <UserCheck className="w-3.5 h-3.5 text-[#2f6f4f] dark:text-[#52b788]" />
             <span className="font-medium text-[#14181f] dark:text-[#f1f3f7]">
-              {t('header.connectedPill', { count: connectedCount, total: accounts.length })}
+              {accounts.length === 0
+                ? '+ Connect Social Accounts'
+                : t('header.connectedPill', { count: connectedCount, total: accounts.length })}
             </span>
-            <div className="flex items-center gap-1 ml-1 pl-2 border-l border-[#e4e1da] dark:border-[#262c38]">
-              {accounts.map(acc => (
-                <span
-                  key={acc.id}
-                  title={`${acc.accountName} (${acc.isConnected ? 'Connected' : 'Disconnected'})`}
-                  className={`w-2 h-2 rounded-full ${
-                    acc.isConnected ? 'bg-[#2f6f4f] dark:bg-[#52b788]' : 'bg-[#e4e1da] dark:bg-[#343d4d]'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
+            {accounts.length > 0 && (
+              <div className="flex items-center gap-1 ml-1 pl-2 border-l border-[#e4e1da] dark:border-[#262c38]">
+                {accounts.map(acc => (
+                  <span
+                    key={acc.id}
+                    title={`${acc.accountName} (${acc.isConnected ? 'Connected' : 'Disconnected'})`}
+                    className={`w-2 h-2 rounded-full ${
+                      acc.isConnected ? 'bg-[#2f6f4f] dark:bg-[#52b788]' : 'bg-[#e4e1da] dark:bg-[#343d4d]'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </button>
 
           {/* Language Selector Dropdown */}
           <LanguageSelector />

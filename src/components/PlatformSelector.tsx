@@ -10,6 +10,7 @@ interface PlatformSelectorProps {
   onSelectAll: () => void;
   accounts: SocialAccount[];
   video: VideoMetadata | null;
+  onOpenAccounts?: () => void;
 }
 
 export const PlatformSelector: React.FC<PlatformSelectorProps> = ({
@@ -17,7 +18,8 @@ export const PlatformSelector: React.FC<PlatformSelectorProps> = ({
   onTogglePlatform,
   onSelectAll,
   accounts,
-  video
+  video,
+  onOpenAccounts
 }) => {
   const { t } = useI18n();
 
@@ -141,11 +143,26 @@ export const PlatformSelector: React.FC<PlatformSelectorProps> = ({
               {/* Account Handle & Connection Status */}
               <div className="mb-2.5 pt-2 border-t border-[#f0ede6] dark:border-[#222834] flex items-center justify-between text-xs">
                 <div className="truncate text-[#14181f] dark:text-[#f1f3f7] font-medium flex items-center gap-1.5">
-                  <span className="truncate">{account?.handle || 'No account linked'}</span>
-                  {accounts.filter(a => a.platform === platformId).length > 1 && (
-                    <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-[#2f6f4f]/15 dark:bg-[#52b788]/20 text-[#2f6f4f] dark:text-[#52b788] shrink-0">
-                      +{accounts.filter(a => a.platform === platformId).length - 1} more
-                    </span>
+                  {account ? (
+                    <>
+                      <span className="truncate">{account.handle}</span>
+                      {accounts.filter(a => a.platform === platformId).length > 1 && (
+                        <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-[#2f6f4f]/15 dark:bg-[#52b788]/20 text-[#2f6f4f] dark:text-[#52b788] shrink-0">
+                          +{accounts.filter(a => a.platform === platformId).length - 1} more
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onOpenAccounts) onOpenAccounts();
+                      }}
+                      className="text-[#2f6f4f] dark:text-[#52b788] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>+ Link Your Account</span>
+                    </button>
                   )}
                 </div>
                 <div className="flex items-center gap-1 shrink-0">

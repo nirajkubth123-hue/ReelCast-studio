@@ -41,12 +41,26 @@ export default function App() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Accounts State with localStorage persistence
+  // Accounts State with localStorage persistence (Cleans up any legacy mock accounts: 'Reelcast Studio', 'Reelcast Creator Page', 'Reelcast Creative Channel')
   const [accounts, setAccounts] = useState<SocialAccount[]>(() => {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('reelcast_connected_accounts');
-        if (saved) return JSON.parse(saved);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            // Strip out pre-seeded demo accounts with dummy IDs
+            const cleaned = parsed.filter((a: SocialAccount) => 
+              a.id !== 'acc-ig-1' && 
+              a.id !== 'acc-fb-1' && 
+              a.id !== 'acc-yt-1' &&
+              a.accountName !== 'Reelcast Studio' &&
+              a.accountName !== 'Reelcast Creator Page' &&
+              a.accountName !== 'Reelcast Creative Channel'
+            );
+            return cleaned;
+          }
+        }
       } catch (e) {
         console.error('Failed to load accounts from localStorage', e);
       }
@@ -840,6 +854,7 @@ export default function App() {
               onSelectAll={handleSelectAllPlatforms}
               accounts={accounts}
               video={video}
+              onOpenAccounts={() => setShowAccountsModal(true)}
             />
 
             {/* Step 3: Captions & Hashtags */}

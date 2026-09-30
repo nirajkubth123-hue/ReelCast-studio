@@ -69,45 +69,6 @@ export const AccountsModal: React.FC<AccountsModalProps> = ({
   const [newAccountHandle, setNewAccountHandle] = useState('');
   const [newAccountSubscribers, setNewAccountSubscribers] = useState('');
 
-  // Quick batch generator for 3 accounts per platform
-  const handleQuickSeed3Accounts = (platform: PlatformId) => {
-    if (!onAddAccount) return;
-    const presets: Record<PlatformId, Array<{ name: string; handle: string; count: string }>> = {
-      instagram: [
-        { name: 'Instagram Main Brand', handle: '@brand.main', count: '45.2K followers' },
-        { name: 'Instagram Reels Viral', handle: '@reels.viralhub', count: '112K followers' },
-        { name: 'Instagram Behind The Scenes', handle: '@bts.creator', count: '18.9K followers' }
-      ],
-      facebook: [
-        { name: 'Facebook Official Business Page', handle: 'Global Creators Official', count: '65.4K followers' },
-        { name: 'Facebook Community Fanpage', handle: 'Shorts & Reels Fan Club', count: '28.1K followers' },
-        { name: 'Facebook Regional Media', handle: 'City Life Media Feed', count: '42.0K followers' }
-      ],
-      youtube: [
-        { name: 'YouTube Shorts Main Channel', handle: '@ShortsProOfficial', count: '89.5K subscribers' },
-        { name: 'YouTube Shorts Gaming & Highlights', handle: '@GamingClipsShorts', count: '54.2K subscribers' },
-        { name: 'YouTube Daily Vlog Shorts', handle: '@DailyLifeVlogShorts', count: '31.8K subscribers' }
-      ]
-    };
-
-    presets[platform].forEach((item) => {
-      onAddAccount({
-        platform,
-        accountName: item.name,
-        handle: item.handle,
-        subscriberCount: item.count,
-        isConnected: true,
-        authMethod: 'live_oauth',
-        connectedAt: new Date().toISOString()
-      });
-    });
-
-    setStatusMessage({
-      type: 'success',
-      text: `Added 3 multiple accounts for ${platform.toUpperCase()} successfully!`
-    });
-  };
-
   // Fetch OAuth configuration from backend
   const fetchAuthConfig = async () => {
     try {
@@ -435,7 +396,7 @@ export const AccountsModal: React.FC<AccountsModalProps> = ({
                 </button>
               </div>
 
-              {/* Platform Filter Tabs & 3-Account Quick Add Presets */}
+              {/* Platform Filter Tabs */}
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#f0ede6] dark:border-[#222834]">
                 {/* Filter pills */}
                 <div className="flex items-center gap-1">
@@ -458,33 +419,8 @@ export const AccountsModal: React.FC<AccountsModalProps> = ({
                   })}
                 </div>
 
-                {/* Quick Add 3 Accounts Presets */}
-                <div className="flex items-center gap-1 text-[11px] text-[#6b6f76] dark:text-[#9aa1b0]">
-                  <span className="text-[10px] uppercase font-bold tracking-wider opacity-70">Quick Add 3:</span>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickSeed3Accounts('instagram')}
-                    title="Add 3 Instagram accounts for multi-channel publishing"
-                    className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#E1306C]/10 text-[#E1306C] hover:bg-[#E1306C]/20 border border-[#E1306C]/20 cursor-pointer"
-                  >
-                    +3 IG
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickSeed3Accounts('facebook')}
-                    title="Add 3 Facebook Pages for multi-channel publishing"
-                    className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#1877F2]/10 text-[#1877F2] hover:bg-[#1877F2]/20 border border-[#1877F2]/20 cursor-pointer"
-                  >
-                    +3 FB
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickSeed3Accounts('youtube')}
-                    title="Add 3 YouTube Shorts channels for multi-channel publishing"
-                    className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#FF0000]/10 text-[#FF0000] hover:bg-[#FF0000]/20 border border-[#FF0000]/20 cursor-pointer"
-                  >
-                    +3 YT
-                  </button>
+                <div className="text-[11px] text-[#6b6f76] dark:text-[#9aa1b0]">
+                  <span>Supports multiple handles &amp; channels</span>
                 </div>
               </div>
             </div>
@@ -610,6 +546,77 @@ export const AccountsModal: React.FC<AccountsModalProps> = ({
                   </button>
                 </div>
               </form>
+            )}
+
+            {/* Empty State when no accounts exist or filtered out */}
+            {accounts.filter(acc => filterPlatform === 'all' || acc.platform === filterPlatform).length === 0 && !isAddingAccount && (
+              <div className="py-8 px-4 text-center rounded-2xl border-2 border-dashed border-[#e4e1da] dark:border-[#262c38] bg-[#fbfbfa] dark:bg-[#11141c]/50 space-y-4">
+                <div className="w-12 h-12 rounded-full bg-[#2f6f4f]/10 dark:bg-[#52b788]/20 text-[#2f6f4f] dark:text-[#52b788] flex items-center justify-center mx-auto">
+                  <UserCheck className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-sm font-bold text-[#14181f] dark:text-[#f1f3f7]">
+                    No Social Accounts Connected Yet
+                  </h3>
+                  <p className="text-xs text-[#6b6f76] dark:text-[#9aa1b0] max-w-sm mx-auto">
+                    Connect your own Instagram, Facebook, or YouTube channel to start cross-posting your Reels and Shorts.
+                  </p>
+                </div>
+
+                {/* Direct Connect Options */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 max-w-md mx-auto pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewAccountPlatform('instagram');
+                      setIsAddingAccount(true);
+                    }}
+                    className="p-3 rounded-xl border border-[#E1306C]/30 bg-[#E1306C]/5 hover:bg-[#E1306C]/10 text-left transition-all group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <Instagram className="w-4 h-4 text-[#E1306C]" />
+                      <span className="text-xs font-bold text-[#14181f] dark:text-[#f1f3f7]">Instagram</span>
+                    </div>
+                    <span className="text-[11px] text-[#E1306C] font-semibold flex items-center gap-1">
+                      + Add Account
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewAccountPlatform('facebook');
+                      setIsAddingAccount(true);
+                    }}
+                    className="p-3 rounded-xl border border-[#1877F2]/30 bg-[#1877F2]/5 hover:bg-[#1877F2]/10 text-left transition-all group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <Facebook className="w-4 h-4 text-[#1877F2]" />
+                      <span className="text-xs font-bold text-[#14181f] dark:text-[#f1f3f7]">Facebook</span>
+                    </div>
+                    <span className="text-[11px] text-[#1877F2] font-semibold flex items-center gap-1">
+                      + Add Page
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewAccountPlatform('youtube');
+                      setIsAddingAccount(true);
+                    }}
+                    className="p-3 rounded-xl border border-[#FF0000]/30 bg-[#FF0000]/5 hover:bg-[#FF0000]/10 text-left transition-all group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <Youtube className="w-4 h-4 text-[#FF0000]" />
+                      <span className="text-xs font-bold text-[#14181f] dark:text-[#f1f3f7]">YouTube</span>
+                    </div>
+                    <span className="text-[11px] text-[#FF0000] font-semibold flex items-center gap-1">
+                      + Add Channel
+                    </span>
+                  </button>
+                </div>
+              </div>
             )}
 
             {accounts

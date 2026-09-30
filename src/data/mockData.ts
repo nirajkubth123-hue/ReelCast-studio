@@ -39,35 +39,7 @@ export const PLATFORMS: Record<string, PlatformConfig> = {
   }
 };
 
-export const INITIAL_ACCOUNTS: SocialAccount[] = [
-  {
-    id: 'acc-ig-1',
-    platform: 'instagram',
-    accountName: 'Reelcast Studio',
-    handle: '@reelcast.creator',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    isConnected: true,
-    subscriberCount: '24.8K followers'
-  },
-  {
-    id: 'acc-fb-1',
-    platform: 'facebook',
-    accountName: 'Reelcast Creator Page',
-    handle: 'Reelcast Official Page',
-    avatarUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80',
-    isConnected: true,
-    pageName: 'Reelcast Creator Hub'
-  },
-  {
-    id: 'acc-yt-1',
-    platform: 'youtube',
-    accountName: 'Reelcast Creative Channel',
-    handle: '@ReelcastShorts',
-    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-    isConnected: true,
-    subscriberCount: '18.2K subscribers'
-  }
-];
+export const INITIAL_ACCOUNTS: SocialAccount[] = [];
 
 export const HASHTAG_PRESETS = [
   {
